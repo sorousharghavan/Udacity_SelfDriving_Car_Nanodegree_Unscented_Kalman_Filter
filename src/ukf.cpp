@@ -25,10 +25,10 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 3;
+  std_a_ = 2;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 0.5;
+  std_yawdd_ = 0.2;
 
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
@@ -77,13 +77,13 @@ void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
 
 		time_us_ = measurement_pack.timestamp_;
 
-    x_ << 1, 1, 1, 1, 1;
+    x_ << 1, 1, 1, 0.1, 0.3;
 
-    P_ << 1, 0, 0, 0, 0,
-          0, 1, 0, 0, 0,
-          0, 0, 1, 0, 0,
-          0, 0, 0, 1, 0,
-          0, 0, 0, 0, 1;
+    P_ << 0.01, 0, 0, 0, 0,
+          0, 0.01, 0, 0, 0,
+          0, 0, 0.01, 0, 0,
+          0, 0, 0, 0.01, 0,
+          0, 0, 0, 0, 0.01;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       /**
@@ -106,7 +106,7 @@ void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       cout << "Initial laser reading" << endl;
       VectorXd temp = VectorXd(5);
-      temp << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 1, 1, 1;
+      temp << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 5, 0.1, 0.3;
       x_ = temp;
       is_initialized_ = true;
     }
